@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 
 
-class navigation_bar extends StatefulWidget {
-  const navigation_bar({Key? key}) : super(key: key);
+import '../screens/Store.dart';
+import '../screens/cart.dart';
+import '../screens/find_doctors.dart';
+import '../screens/home.dart';
+import '../screens/patient_profile.dart';
+
+
+class NavBar extends StatefulWidget {
+  const NavBar({Key? key}) : super(key: key);
 
   @override
   _NavBarState createState() => _NavBarState();
 }
 
-class _NavBarState extends State<navigation_bar> {
+class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [Home()];
+  final List<Widget> _screens = [HomeScreen(),AppoinmentScreen(),StoreScreen(),CartScreen(),PatientProfile()];
 
   @override
   Widget build(BuildContext context) {
@@ -29,29 +36,30 @@ class _NavBarState extends State<navigation_bar> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon:Image.asset('assest/icon/home.png'),
             activeIcon: Icon(Icons.home_rounded),
             label: 'Home',
             backgroundColor: const Color(0xFFE9EDF5),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.fastfood_outlined),
-            activeIcon: Icon(Icons.fastfood_rounded),
-            label: 'Meals',
+            icon: Icon(Icons.meeting_room_outlined),
+            activeIcon: Icon(Icons.meeting_room_outlined),
+            label: 'Appoinment',
             backgroundColor: const Color(0xFFE9EDF5),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.tv),
-            activeIcon: Icon(Icons.tv),
-            label: 'Appointments',
+            icon: Icon(Icons.shop_2),
+            activeIcon: Icon(Icons.shop_2),
+            label: 'Shop',
             backgroundColor: const Color(0xFFE9EDF5),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.emergency_outlined),
-            activeIcon: Icon(Icons.emergency),
-            label: 'Emergency',
+            icon: Icon(Icons.shopping_cart),
+            activeIcon: Icon(Icons.shopping_cart),
+            label: 'Cart',
             backgroundColor: const Color(0xFFE9EDF5),
           ),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
             activeIcon: Icon(Icons.person_rounded),
@@ -62,6 +70,4 @@ class _NavBarState extends State<navigation_bar> {
       ),
     );
   }
-
-  static Home() {}
 }

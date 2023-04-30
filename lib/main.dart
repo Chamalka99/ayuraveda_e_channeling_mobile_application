@@ -8,6 +8,10 @@ import 'screens/login_page.dart';
 import 'screens/register_form.dart';
 import 'navbar/navigation_bar.dart';
 import 'screens/home.dart';
+import 'screens/patient_profile.dart';
+
+
+
 
 
 
@@ -26,11 +30,13 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-
-          '/': (context) => navigation_bar(),
+          '/': (context) => NavBar(),
+          '/profile': (context) => PatientProfile(),
           '/register': (context) => RegScreen(),
           '/login': (context) => LoginScreen(),
           '/home': (context) => HomeScreen(),
+          '/profile': (context) => PatientProfile(),
+
 
 
     });

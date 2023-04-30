@@ -8,6 +8,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController _searchController = TextEditingController();
+
+
     return Scaffold(
       backgroundColor: const Color(0xFFE9EDF5), // Set the background color
       body: SingleChildScrollView(
@@ -79,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Popular Workouts',
+                      'Find Doctors',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -87,52 +89,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 10, bottom: 20),
-                  height: 140,
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ProfileScreen()),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 30, right: 5.0),
-                          child: Image.asset('assets/images/hit_training.png'),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ProfileScreen()),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Image.asset('assets/images/back_stretching.png'),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ProfileScreen()),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 5.0, right: 30.0),
-                          child: Image.asset('assets/images/evening_stretching.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+               
               ],
             ),
           ],
