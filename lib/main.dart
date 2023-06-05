@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/material.dart';
 
 
@@ -9,7 +10,8 @@ import 'screens/register_form.dart';
 import 'navbar/navigation_bar.dart';
 import 'screens/home.dart';
 import 'screens/patient_profile.dart';
-
+import 'screens/all_records.dart';
+import 'package:ayuraveda_e_channeling/screens/cart.dart';
 
 
 
@@ -36,6 +38,8 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginScreen(),
           '/home': (context) => HomeScreen(),
           '/profile': (context) => PatientProfile(),
+          '/records': (context) => AllRecords(),
+          '/cart': (context) => ShoppingCartScreen(),
 
 
 

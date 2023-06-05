@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 30, right: 5.0),
-                          child: Image.asset('assets/face.jpg'),
+                          child: Image.asset("assets/images/Rectangle.png"),
                         ),
                       ),
                       GestureDetector(
@@ -120,7 +120,7 @@ class HomeScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5.0),
                           child:
-                              Image.asset('assets/images/back_stretching.png'),
+                              Image.asset("assets/images/Rectangle.png"),
                         ),
                       ),
                       GestureDetector(
@@ -135,7 +135,7 @@ class HomeScreen extends StatelessWidget {
                           padding:
                               const EdgeInsets.only(left: 5.0, right: 30.0),
                           child: Image.asset(
-                              'assets/images/evening_stretching.png'),
+                              "assets/images/Rectangle.png"),
                         ),
                       ),
                     ],
@@ -157,7 +157,7 @@ class HomeScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Image.asset(
-                                    'assets/logo.png',
+                                    "assets/images/P1.png",
                                     height: 200,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
@@ -174,7 +174,7 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          'Price: \$XX,XXX',
+                                          'Price: \Rs.2,500',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,
@@ -198,7 +198,7 @@ class HomeScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Image.asset(
-                                    'assets/logo.png',
+                                    "assets/images/P2.png",
                                     height: 200,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
@@ -215,7 +215,7 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          'Price: \$XX,XXX',
+                                          'Price: \Rs.2,500',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,
@@ -243,7 +243,7 @@ class HomeScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Image.asset(
-                                    'assets/logo.png',
+                                    "assets/images/P2.png",
                                     height: 200,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
@@ -260,7 +260,7 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          'Price: \$XX,XXX',
+                                          'Price: \Rs.2,500',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,
@@ -284,7 +284,7 @@ class HomeScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Image.asset(
-                                    'assets/logo.png',
+                                    "assets/images/P2.png",
                                     height: 200,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
@@ -301,7 +301,7 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          'Price: \$XX,XXX',
+                                          'Price: \Rs.2,500',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.normal,

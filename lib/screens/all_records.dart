@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppoinmentScreen extends StatelessWidget {
-
+class AllRecords extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +92,7 @@ final List<Article> _articles = [
   Article(
     title: "Instagram quietly limits ‘daily time limit’ option",
     author: "MacRumors",
-    imageUrl: "assets/images/P2.png",
+    imageUrl: "https://picsum.photos/id/1000/960/540",
     postedOn: "Yesterday",
   ),
   Article(
