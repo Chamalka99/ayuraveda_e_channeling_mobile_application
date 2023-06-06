@@ -1,136 +1,185 @@
 import 'package:flutter/material.dart';
 
-class AppoinmentScreen extends StatelessWidget {
+class Article {
+  final String title;
+  final String author;
+  final String postedOn;
+  final String imageUrl;
+
+  Article({
+    required this.title,
+    required this.author,
+    required this.postedOn,
+    required this.imageUrl,
+  });
+}
+
+class YourWidget extends StatefulWidget {
+  @override
+  _YourWidgetState createState() => _YourWidgetState();
+}
+
+class _YourWidgetState extends State<YourWidget> {
+  final List<Article> _articles = [
+    Article(
+      title: 'Dr. Anjali Asok',
+      author: 'Specilist Gynecological Disorders',
+      postedOn: '6 Years experience',
+      imageUrl: 'https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=740&t=st=1686080815~exp=1686081415~hmac=6f775fcb955d2b8c2c1013d98b58638f34c32c3f8dc0ec96f97a7beb8c116b96',
+    ),
+    Article(
+      title: 'Dr. Srishankar. A',
+      author: 'Specilist Gynecological Disorders',
+      postedOn: '12 Years experience',
+      imageUrl: 'https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=740&t=st=1686080815~exp=1686081415~hmac=6f775fcb955d2b8c2c1013d98b58638f34c32c3f8dc0ec96f97a7beb8c116b96',
+    ),
+    Article(
+      title: 'Dr. Srishankar. A',
+      author: 'Specilist Gynecological Disorders',
+      postedOn: '8 Years experience',
+      imageUrl: 'https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=740&t=st=1686080815~exp=1686081415~hmac=6f775fcb955d2b8c2c1013d98b58638f34c32c3f8dc0ec96f97a7beb8c116b96',
+    ),
+    Article(
+      title: 'Dr. Srishankar. A',
+      author: 'Specilist Gynecological Disorders',
+      postedOn: '5 Years experience',
+      imageUrl: 'https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg?w=740&t=st=1686080815~exp=1686081415~hmac=6f775fcb955d2b8c2c1013d98b58638f34c32c3f8dc0ec96f97a7beb8c116b96',
+    ),
+    // Add more articles here
+  ];
+
+  List<Article> _filteredArticles = [];
+
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    _filteredArticles = _articles;
+    super.initState();
+  }
+
+  void _filterArticles(String query) {
+    setState(() {
+      _filteredArticles = _articles
+          .where((article) =>
+      article.title.toLowerCase().contains(query.toLowerCase()) ||
+          article.author.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: ListView.builder(
-            itemCount: _articles.length,
-            itemBuilder: (BuildContext context, int index) {
-              final item = _articles[index];
-              return Container(
-                height: 136,
-                margin:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-                decoration: BoxDecoration(
+      body: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30, top: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _filterArticles,
+                    decoration: InputDecoration(
+                      hintText: 'Search',
+                      prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear, color: Colors.grey[500]),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterArticles('');
+                        },
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredArticles.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = _filteredArticles[index];
+                return Container(
+                  height: 136,
+                  margin:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                  decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFE0E0E0)),
-                    borderRadius: BorderRadius.circular(8.0)),
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  children: [
-                    Expanded(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               item.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                              const TextStyle(fontWeight: FontWeight.bold),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 8),
-                            Text("${item.author} · ${item.postedOn}",
-                                style: Theme.of(context).textTheme.caption),
+                            Text(
+                              "${item.author} · ${item.postedOn}",
+                              style: Theme.of(context).textTheme.caption,
+                            ),
                             const SizedBox(height: 8),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icons.bookmark_border_rounded,
-                                Icons.share,
-                                Icons.more_vert
-                              ].map((e) {
-                                return InkWell(
-                                  onTap: () {},
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: Icon(e, size: 16),
-                                  ),
-                                );
-                              }).toList(),
-                            )
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.star,
+                                      size: 16),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.star, size: 16),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.star, size: 16),
+                                ),
+                              ],
+                            ),
                           ],
-                        )),
-                    Container(
+                        ),
+                      ),
+                      Container(
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(item.imageUrl),
-                            ))),
-                  ],
-                ),
-              );
-            },
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(8.0),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(item.imageUrl),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-class Article {
-  final String title;
-  final String imageUrl;
-  final String author;
-  final String postedOn;
-
-  Article(
-      {required this.title,
-        required this.imageUrl,
-        required this.author,
-        required this.postedOn});
-}
-
-final List<Article> _articles = [
-  Article(
-    title: "Instagram quietly limits ‘daily time limit’ option",
-    author: "MacRumors",
-    imageUrl: "assets/images/P2.png",
-    postedOn: "Yesterday",
-  ),
-  Article(
-      title: "Google Search dark theme goes fully black for some on the web",
-      imageUrl: "https://picsum.photos/id/1010/960/540",
-      author: "9to5Google",
-      postedOn: "4 hours ago"),
-  Article(
-    title: "Check your iPhone now: warning signs someone is spying on you",
-    author: "New York Times",
-    imageUrl: "https://picsum.photos/id/1001/960/540",
-    postedOn: "2 days ago",
-  ),
-  Article(
-    title:
-    "Amazon’s incredibly popular Lost Ark MMO is ‘at capacity’ in central Europe",
-    author: "MacRumors",
-    imageUrl: "https://picsum.photos/id/1002/960/540",
-    postedOn: "22 hours ago",
-  ),
-  Article(
-    title:
-    "Panasonic's 25-megapixel GH6 is the highest resolution Micro Four Thirds camera yet",
-    author: "Polygon",
-    imageUrl: "https://picsum.photos/id/1020/960/540",
-    postedOn: "2 hours ago",
-  ),
-  Article(
-    title: "Samsung Galaxy S22 Ultra charges strangely slowly",
-    author: "TechRadar",
-    imageUrl: "https://picsum.photos/id/1021/960/540",
-    postedOn: "10 days ago",
-  ),
-  Article(
-    title: "Snapchat unveils real-time location sharing",
-    author: "Fox Business",
-    imageUrl: "https://picsum.photos/id/1060/960/540",
-    postedOn: "10 hours ago",
-  ),
-];
