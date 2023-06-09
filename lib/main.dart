@@ -1,6 +1,9 @@
 
 
 
+
+
+
 import 'package:flutter/material.dart';
 
 
@@ -13,7 +16,8 @@ import 'screens/home.dart';
 import 'screens/patient_profile.dart';
 import 'screens/all_records.dart';
 import 'package:ayuraveda_e_channeling/screens/cart.dart';
-
+import 'package:ayuraveda_e_channeling/screens/doctor_registration.dart';
+import 'package:ayuraveda_e_channeling/screens/doctor_info.dart';
 
 
 
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (context) => NavBar(),
+          '/': (context) => DoctorsInfo(),
           '/profile': (context) => PatientProfile(),
           '/register': (context) => RegScreen(),
           '/login': (context) => LoginScreen(),
@@ -41,6 +45,7 @@ class MyApp extends StatelessWidget {
           '/profile': (context) => PatientProfile(),
           '/records': (context) => AllRecords(),
           '/cart': (context) => ShoppingCartScreen(),
+          '/doctorreg': (context) => RegistrationFormApp(),
 
 
 
