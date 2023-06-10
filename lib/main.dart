@@ -4,6 +4,7 @@
 
 
 
+import 'package:ayuraveda_e_channeling/screens/test.dart';
 import 'package:flutter/material.dart';
 
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (context) => DoctorsInfo(),
+          '/': (context) => DataPreview(),
           '/profile': (context) => PatientProfile(),
           '/register': (context) => RegScreen(),
           '/login': (context) => LoginScreen(),

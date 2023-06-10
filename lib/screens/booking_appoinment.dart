@@ -57,7 +57,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctor Registration Form'),
+        title: Text('Book AN APPOITMENT'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -68,10 +68,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'First Name'),
+                decoration: InputDecoration(labelText: 'Patients Name'),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter doctor first name';
+                    return 'Please Enter Patients Name';
                   }
                   return null;
                 },
