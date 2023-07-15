@@ -1,11 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
-
 import 'login_page.dart';
+import 'package:dio/dio.dart';
 
-class RegScreen extends StatelessWidget {
-  const RegScreen({Key? key}) : super(key: key);
-
+class PatientRegistrationForm extends StatelessWidget {
+  const PatientRegistrationForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +57,6 @@ class _Logo extends StatelessWidget {
           width: isSmallScreen ? 150 : 150,
           height: isSmallScreen ? 150 : 150,
         ),
-
       ],
     );
   }
@@ -77,6 +75,163 @@ class __FormContentState extends State<_FormContent> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  TextEditingController firstnameController = TextEditingController();
+  TextEditingController lastnameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void _register() async {
+    String apiUrl = 'http://localhost/ayuravedaapp/test.php'; // Replace with your PHP script URL
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+
+    };
+
+    final Map<String, String> data = {
+      'firstname': firstnameController.text,
+      'lastname': lastnameController.text,
+      'address': addressController.text,
+      'email': emailController.text,
+      'password': passwordController.text,
+    };
+
+    print('Data to send: $data');
+
+    // Encode the data as JSON
+    //String jsonData = json.encode(data);
+    // Create Dio instance
+    Dio dio = Dio();
+
+    try {
+      // Make the POST request
+      final response = await dio.post(
+        apiUrl,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: data,
+      );
+
+      // Check the response status code
+      if (response.statusCode == 200) {
+        // Request successful
+        print('Data sent successfully');
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: Text('Registerd'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // Request failed
+        print('Failed to send data. Error code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Exception occurred during the request
+      print('Error: $error');
+    }
+
+
+
+
+    /*
+    if (response.statusCode == 200) {
+      if (responseData['status']) {
+        // Data Inserted Successfully
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: Text(responseData['msg']),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // Data Failed to be Inserted
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text(responseData['msg']),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      // Error with HTTP request
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Failed to connect to the server.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+*/
+  }
+
+  @override
+  void dispose() {
+    firstnameController.dispose();
+    lastnameController.dispose();
+    addressController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,15 +242,13 @@ class __FormContentState extends State<_FormContent> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            ///Fist name
+            ///First name
             TextFormField(
+              controller: firstnameController,
               validator: (value) {
-                // add email validation
                 if (value == null || value.isEmpty) {
                   return 'Please enter first name';
                 }
-
                 return null;
               },
               decoration: const InputDecoration(
@@ -106,15 +259,14 @@ class __FormContentState extends State<_FormContent> {
               ),
             ),
 
-            ///last name
+            ///Last name
             _gap(),
             TextFormField(
+              controller: lastnameController,
               validator: (value) {
-                // add email validation
                 if (value == null || value.isEmpty) {
                   return 'Please enter last name';
                 }
-
                 return null;
               },
               decoration: const InputDecoration(
@@ -125,15 +277,14 @@ class __FormContentState extends State<_FormContent> {
               ),
             ),
 
-            ///address
+            ///Address
             _gap(),
             TextFormField(
+              controller: addressController,
               validator: (value) {
-                // add address
                 if (value == null || value.isEmpty) {
                   return 'Please enter address';
                 }
-
                 return null;
               },
               decoration: const InputDecoration(
@@ -144,22 +295,20 @@ class __FormContentState extends State<_FormContent> {
               ),
             ),
 
-            ///email
+            ///Email
             _gap(),
             TextFormField(
+              controller: emailController,
               validator: (value) {
-                // add email validation
                 if (value == null || value.isEmpty) {
                   return 'Please enter email';
                 }
-
                 bool emailValid = RegExp(
                     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                     .hasMatch(value);
                 if (!emailValid) {
                   return 'Please enter a valid email';
                 }
-
                 return null;
               },
               decoration: const InputDecoration(
@@ -170,14 +319,14 @@ class __FormContentState extends State<_FormContent> {
               ),
             ),
 
-            ///password
+            ///Password
             _gap(),
             TextFormField(
+              controller: passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter password';
                 }
-
                 if (value.length < 6) {
                   return 'Password must be at least 6 characters';
                 }
@@ -185,68 +334,66 @@ class __FormContentState extends State<_FormContent> {
               },
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
-                  prefixIcon: const Icon(Icons.lock_outline_rounded),
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )),
+                labelText: 'Password',
+                hintText: 'Enter your password',
+                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(_isPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                ),
+              ),
             ),
 
-
-
-            ///submit button
+            ///Submit button
             _gap(),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                   backgroundColor: Color(0xFF0F3446),
                 ),
                 child: const Padding(
                   padding: EdgeInsets.all(15.0),
                   child: Text(
                     'Sign in',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style:
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    /// do something
+                    _register();
                   }
                 },
               ),
             ),
 
-            ///login
+            ///Login
             _gap(),
             Center(
-              child:Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Opacity(
                     opacity: 0.5,
-                    child:Text(
-                      'Already registerd?',
-                    ),
+                    child: Text('Already registered?'),
                   ),
                   SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) =>LoginScreen()),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     },
                     child: Text(
@@ -265,5 +412,5 @@ class __FormContentState extends State<_FormContent> {
     );
   }
 
-  Widget _gap() => const SizedBox(height:16);
+  Widget _gap() => const SizedBox(height: 16);
 }

@@ -1,10 +1,6 @@
 
-
-
-
-
-
-import 'package:ayuraveda_e_channeling/screens/test.dart';
+import 'package:ayuraveda_e_channeling/screens/Store.dart';
+import 'package:ayuraveda_e_channeling/screens/find_doctors.dart';
 import 'package:flutter/material.dart';
 
 
@@ -19,7 +15,7 @@ import 'screens/all_records.dart';
 import 'package:ayuraveda_e_channeling/screens/cart.dart';
 import 'package:ayuraveda_e_channeling/screens/doctor_registration.dart';
 import 'package:ayuraveda_e_channeling/screens/doctor_info.dart';
-
+import 'package:ayuraveda_e_channeling/screens/doctor_or_patient.dart';
 
 
 
@@ -38,15 +34,15 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (context) => DataPreview(),
-          '/profile': (context) => PatientProfile(),
-          '/register': (context) => RegScreen(),
-          '/login': (context) => LoginScreen(),
+          '/': (context) =>  NavBar(),
+          '/profile': (context) => FigmaToCodeApp(),
+          '/register': (context) => PatientRegistrationForm(),
+          '/login': (context) => PatientRegistrationForm(),
           '/home': (context) => HomeScreen(),
-          '/profile': (context) => PatientProfile(),
+          '/profile': (context) => FigmaToCodeApp(),
           '/records': (context) => AllRecords(),
           '/cart': (context) => ShoppingCartScreen(),
-          '/doctorreg': (context) => RegistrationFormApp(),
+          '/doctorreg': (context) => YourWidget(),
 
 
 

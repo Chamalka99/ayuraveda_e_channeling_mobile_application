@@ -18,7 +18,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [HomeScreen(),YourWidget(),StoreScreen(),ShoppingCartScreen(),PatientProfile()];
+  final List<Widget> _screens = [HomeScreen(),YourWidget(),MyComponent(),ShoppingCartScreen(),FigmaToCodeApp()];
 
   @override
   Widget build(BuildContext context) {

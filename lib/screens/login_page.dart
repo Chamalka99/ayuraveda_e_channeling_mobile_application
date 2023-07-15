@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'register_form.dart';
 
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +209,7 @@ class __FormContentState extends State<_FormContent> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>RegScreen()),
+                            builder: (context) =>PatientRegistrationForm()),
                       );
                     },
                     child: Text(

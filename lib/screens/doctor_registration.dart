@@ -1,55 +1,65 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(RegistrationFormApp());
+class DoctorRegistrationForm extends StatefulWidget {
+  @override
+  _DoctorRegistrationFormState createState() => _DoctorRegistrationFormState();
 }
 
-class RegistrationFormApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Doctor Registration Form',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: RegistrationForm(),
-    );
-  }
-}
+class _DoctorRegistrationFormState extends State<DoctorRegistrationForm> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController firstnameController = TextEditingController();
+  TextEditingController lastnameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController telephoneController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  TextEditingController qualificationController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
-class RegistrationForm extends StatefulWidget {
-  @override
-  _RegistrationFormState createState() => _RegistrationFormState();
-}
-
-class _RegistrationFormState extends State<RegistrationForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _register() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Perform registration logic
-      final name = _nameController.text;
-      final email = _emailController.text;
-      final password = _passwordController.text;
+      // Prepare the data to be sent
+      Map<String, dynamic> data = {
+        'firstname': firstnameController.text,
+        'lastname': lastnameController.text,
+        'email': emailController.text,
+        'telephone': telephoneController.text,
+        'category': categoryController.text,
+        'qualification': qualificationController.text,
+        'age': ageController.text,
+        'password': passwordController.text,
+      };
 
-      // You can process the form data here
-      // ...
+      String apiUrl = 'http://localhost/ayuravedaapp/doctorregistration.php';
 
-      // Clear the form fields after registration
-      _nameController.clear();
-      _emailController.clear();
-      _passwordController.clear();
+      // Send the data to the PHP API
+      try {
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: json.encode(data),
+        );
+
+        if (response.statusCode == 200) {
+          // Parse the response
+          dynamic responseData = json.decode(response.body);
+          if (responseData['status'] == true) {
+            print(responseData['msg']);
+          } else {
+            print('Error: ${responseData['msg']}');
+          }
+        } else {
+          // Error occurred
+          print('Error: ${response.body}');
+        }
+      } catch (e) {
+        print('Error: $e');
+      }
     }
   }
 
@@ -57,101 +67,100 @@ class _RegistrationFormState extends State<RegistrationForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctor Registration Form'),
+        title: Text('Doctor Registration'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          child: ListView(
+            children: <Widget>[
               TextFormField(
-                controller: _nameController,
+                controller: firstnameController,
                 decoration: InputDecoration(labelText: 'First Name'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter doctor first name';
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your First name';
                   }
                   return null;
                 },
               ),
+              // Add more form fields for other input fields
               TextFormField(
-                controller: _emailController,
+                controller: lastnameController,
                 decoration: InputDecoration(labelText: 'Last Name'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter doctor last name';
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
                   }
                   return null;
                 },
               ),
+              // Add more form fields for other input fields
               TextFormField(
-                controller: _passwordController,
+                controller: emailController,
                 decoration: InputDecoration(labelText: 'Email'),
-                obscureText: true,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a Email';
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
                   }
                   return null;
                 },
               ),
               TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Telephone Number'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter doctor Telephone Number';
+                controller: telephoneController,
+                decoration: InputDecoration(labelText: 'Phone Number'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter phone number';
                   }
                   return null;
                 },
               ),
               TextFormField(
-                controller: _emailController,
+                controller: categoryController,
                 decoration: InputDecoration(labelText: 'Doctor Category'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please select doctor Category';
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a doctor category';
                   }
                   return null;
                 },
               ),
               TextFormField(
-                controller: _emailController,
+                controller: qualificationController,
                 decoration: InputDecoration(labelText: 'Education Qualification'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter education qualification';
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the education qualification';
                   }
                   return null;
                 },
               ),
               TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Doctor Image'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return '';
+                controller: ageController,
+                decoration: InputDecoration(labelText: 'Doctor Age'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter doctor age';
                   }
                   return null;
                 },
               ),
               TextFormField(
-                controller: _emailController,
+                controller: passwordController,
                 decoration: InputDecoration(labelText: 'Doctor Password'),
-                validator: (value) {
-                  if (value!.isEmpty) {
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter a password';
                   }
                   return null;
                 },
               ),
 
-              SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: _register,
                 child: Text('Register'),
+                onPressed: _submitForm,
               ),
             ],
           ),
@@ -161,3 +170,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
   }
 }
 
+void main() {
+  runApp(MaterialApp(
+    home: DoctorRegistrationForm(),
+  ));
+}
