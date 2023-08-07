@@ -65,6 +65,7 @@ class _DoctorRegistrationFormState extends State<DoctorRegistrationForm> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isPasswordVisible = false;
     return Scaffold(
       appBar: AppBar(
         title: Text('Doctor Registration'),
@@ -149,14 +150,30 @@ class _DoctorRegistrationFormState extends State<DoctorRegistrationForm> {
               ),
               TextFormField(
                 controller: passwordController,
-                decoration: InputDecoration(labelText: 'Doctor Password'),
-                validator: (String? value) {
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(_isPasswordVisible ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
+                    return 'Please enter password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
                   }
                   return null;
                 },
+                obscureText: !_isPasswordVisible,
               ),
+
+
 
               ElevatedButton(
                 child: Text('Register'),

@@ -82,7 +82,7 @@ class __FormContentState extends State<_FormContent> {
   TextEditingController passwordController = TextEditingController();
 
   void _register() async {
-    String apiUrl = 'http://localhost/ayuravedaapp/test.php'; // Replace with your PHP script URL
+    String apiUrl = 'http://localhost/ayuravedaapp/test.php/patientRegister/'; // Replace with your PHP script URL
 
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -152,74 +152,6 @@ class __FormContentState extends State<_FormContent> {
     }
 
 
-
-
-    /*
-    if (response.statusCode == 200) {
-      if (responseData['status']) {
-        // Data Inserted Successfully
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Success'),
-              content: Text(responseData['msg']),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        // Data Failed to be Inserted
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Error'),
-              content: Text(responseData['msg']),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
-      // Error with HTTP request
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text('Failed to connect to the server.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-*/
   }
 
   @override
@@ -365,7 +297,7 @@ class __FormContentState extends State<_FormContent> {
                 child: const Padding(
                   padding: EdgeInsets.all(15.0),
                   child: Text(
-                    'Sign in',
+                    'Sign Up',
                     style:
                     TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),

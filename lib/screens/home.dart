@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +77,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            ///Popular Workouts Section
+
             Column(
               children: [
                 Padding(
@@ -135,7 +139,7 @@ class HomeScreen extends StatelessWidget {
                           padding:
                               const EdgeInsets.only(left: 5.0, right: 30.0),
                           child: Image.network(
-                              "http://localhost/ayuravedaapp/assets/chamalka.png"),
+                              "http://localhost/ayuravedaapp/assets/Rectangle.png"),
                         ),
                       ),
                     ],
@@ -167,7 +171,7 @@ class HomeScreen extends StatelessWidget {
                                     child: Column(
                                       children: [
                                         Text(
-                                          'Tesla Model S',
+                                          'Sample 01',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -208,7 +212,7 @@ class HomeScreen extends StatelessWidget {
                                     child: Column(
                                       children: [
                                         Text(
-                                          'Tesla Model 3',
+                                          'Sample 02',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -253,7 +257,7 @@ class HomeScreen extends StatelessWidget {
                                     child: Column(
                                       children: [
                                         Text(
-                                          'Tesla Model X',
+                                          'Sample 03',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -294,7 +298,7 @@ class HomeScreen extends StatelessWidget {
                                     child: Column(
                                       children: [
                                         Text(
-                                          'Tesla Model Y',
+                                          'Sample 04',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,

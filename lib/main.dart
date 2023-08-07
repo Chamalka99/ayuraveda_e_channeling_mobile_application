@@ -1,5 +1,6 @@
 
 import 'package:ayuraveda_e_channeling/screens/Store.dart';
+import 'package:ayuraveda_e_channeling/screens/appoinment.dart';
 import 'package:ayuraveda_e_channeling/screens/find_doctors.dart';
 import 'package:flutter/material.dart';
 
@@ -34,15 +35,18 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (context) =>  NavBar(),
-          '/profile': (context) => FigmaToCodeApp(),
+          '/': (context) => DoctorPatient(),
+          '/profile': (context) => PatientProfile(),
           '/register': (context) => PatientRegistrationForm(),
           '/login': (context) => PatientRegistrationForm(),
           '/home': (context) => HomeScreen(),
-          '/profile': (context) => FigmaToCodeApp(),
+          '/profile': (context) => PatientProfile(),
           '/records': (context) => AllRecords(),
-          '/cart': (context) => ShoppingCartScreen(),
+          '/cart': (context) => CartScreen(),
           '/doctorreg': (context) => YourWidget(),
+          '/appoinment': (context) => DoctorConsultationFormApp(),
+
+
 
 
 

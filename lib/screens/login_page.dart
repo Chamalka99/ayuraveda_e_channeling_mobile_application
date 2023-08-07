@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../navbar/navigation_bar.dart';
 import 'register_form.dart';
 
 class LoginPage extends StatelessWidget {
@@ -31,7 +33,7 @@ class LoginPage extends StatelessWidget {
               )
                   : Container(
                 padding: const EdgeInsets.all(32.0),
-                constraints: const BoxConstraints(maxWidth: 800),
+                constraints: const BoxConstraints(maxWidth: 801),
                 child: Row(
                   children: const [
                     Expanded(child: _Logo()),
@@ -49,7 +51,6 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-
 class _Logo extends StatelessWidget {
   const _Logo({Key? key}) : super(key: key);
 
@@ -65,7 +66,6 @@ class _Logo extends StatelessWidget {
           width: isSmallScreen ? 200 : 200,
           height: isSmallScreen ? 200 : 200,
         ),
-
       ],
     );
   }
@@ -80,9 +80,9 @@ class _FormContent extends StatefulWidget {
 
 class __FormContentState extends State<_FormContent> {
   bool _isPasswordVisible = false;
-  bool _rememberMe = false;
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -94,22 +94,14 @@ class __FormContentState extends State<_FormContent> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            ///email
             TextFormField(
+              controller: _emailController,
               validator: (value) {
-                // add email validation
+                // Email validation logic
                 if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Please enter your email';
                 }
-
-                bool emailValid = RegExp(
-                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                    .hasMatch(value);
-                if (!emailValid) {
-                  return 'Please enter a valid email';
-                }
-
+                // Add your email validation logic here if needed
                 return null;
               },
               decoration: const InputDecoration(
@@ -119,42 +111,36 @@ class __FormContentState extends State<_FormContent> {
                 border: OutlineInputBorder(),
               ),
             ),
-
-            ///password
-            _gap(),
+            const SizedBox(height: 16),
             TextFormField(
+              controller: _passwordController,
               validator: (value) {
+                // Password validation logic
                 if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Please enter your password';
                 }
-
-                if (value.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
+                // Add your password validation logic here if needed
                 return null;
               },
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
-                  prefixIcon: const Icon(Icons.lock_outline_rounded),
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )),
+                labelText: 'Password',
+                hintText: 'Enter your password',
+                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(_isPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                ),
+              ),
             ),
-
-
-            ///forgot password
-            _gap(),
-
+            const SizedBox(height: 16),
             Container(
               alignment: Alignment.center,
               child: Opacity(
@@ -164,35 +150,30 @@ class __FormContentState extends State<_FormContent> {
                 ),
               ),
             ),
-
-            ///submit button
-            _gap(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  backgroundColor: Color(0xFF0F3446),
-                  fixedSize: Size.fromHeight(50),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loginUser,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                backgroundColor: const Color(0xFF0F3446),
+                fixedSize: const Size.fromHeight(50),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  'Sign in',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    /// do something
-                  }
-                },
               ),
             ),
-
             ///sign up
-            _gap(),
+
+            const SizedBox(height: 16),
             Center(
               child:Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -222,11 +203,53 @@ class __FormContentState extends State<_FormContent> {
                 ],
               ),
             ),
+
+            // ... Other widgets ...
           ],
         ),
       ),
     );
   }
 
-  Widget _gap() => const SizedBox(height:16);
+  Future<void> _loginUser() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final String email = _emailController.text;
+      final String password = _passwordController.text;
+
+      // Replace 'YOUR_API_URL' with the actual URL for your login endpoint
+      final String apiUrl = 'http://localhost/ayuravedaapp/test.php/patientLogin';
+
+      final response = await http.post(Uri.parse(apiUrl), body:json.encode({
+        'username': email,
+        'password': password,
+      }));
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final bool success = jsonData['status'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(jsonData['msg'])),
+        );
+        if (success) {
+          // Login successful, navigate to the home screen or desired screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NavBar()),
+          );
+        } else {
+          // Show error message or handle login failure
+          // You can display an error message here if needed
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login failed')),
+          );
+        }
+      } else {
+        // Show error message or handle API call failure
+        // You can display an error message here if needed
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to connect to the server')),
+        );
+      }
+    }
+  }
 }

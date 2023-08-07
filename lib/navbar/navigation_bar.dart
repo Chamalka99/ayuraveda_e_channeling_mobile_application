@@ -18,7 +18,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [HomeScreen(),YourWidget(),MyComponent(),ShoppingCartScreen(),FigmaToCodeApp()];
+  final List<Widget> _screens = [HomeScreen(),YourWidget(),MyComponent(),CartScreen(),PatientProfile()];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class _NavBarState extends State<NavBar> {
         },
         items: [
           BottomNavigationBarItem(
-            icon:Image.asset('assest/icon/home.png'),
+            icon:Icon(Icons.home),
             activeIcon: Icon(Icons.home_rounded),
             label: 'Home',
             backgroundColor: const Color(0xFFE9EDF5),

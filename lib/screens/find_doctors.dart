@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:ayuraveda_e_channeling/screens/appoinment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+
 
 class YourWidget extends StatefulWidget {
   @override
@@ -37,8 +40,18 @@ class _MyComponentState extends State<YourWidget> {
       body: ListView.builder(
         itemCount: doctorinformation.length,
         itemBuilder: (context, index) {
-          final doctorinfor = doctorinformation[index];
-          return DoctorInf(doctorinfor:doctorinfor);
+          final doctorInfo = doctorinformation[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DoctorDetailsScreen(doctorInfo: doctorInfo),
+                ),
+              );
+            },
+            child: DoctorInf(doctorinfor: doctorInfo),
+          );
         },
       ),
     );
@@ -76,37 +89,144 @@ class DoctorInf extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       color: Colors.white,
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            "assets/images/P1.png",
-            height: 200,
-            width: double.infinity,
-            fit: BoxFit.cover,
+          Expanded(
+            flex: 1,
+            child: Image.asset(
+              "assets/images/E1.png",
+              height: 125, // Adjust the height here
+              fit: BoxFit.cover,
+            ),
           ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Text(
-                  doctorinfor.name,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doctorinfor.name,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  doctorinfor.experience,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
+                  Text(
+                    doctorinfor.experience,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
-                ),
-              ],
+                  Text(
+                    doctorinfor.specialities,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
   }
+
+
 }
+
+
+
+
+class DoctorDetailsScreen extends StatelessWidget {
+  final Doctorlist doctorInfo;
+
+  DoctorDetailsScreen({required this.doctorInfo});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Doctor Details'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              children: [
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.black, // Change the color as needed
+                        width: 2.0, // Set the desired width for the outline
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        "assets/images/E1.png", // Replace this with the image URL or local asset path
+                        height: 200, // Set the desired height of the circular image
+                        width: 200, // Set the desired width of the circular image
+                        fit: BoxFit.cover, // Adjust the image's size to cover the entire area
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        doctorInfo.name,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Specialities: ${doctorInfo.specialities}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Experience: ${doctorInfo.experience}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Add the functionality to book an appointment here
+              // For example, you can navigate to the DoctorConsultationFormApp screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DoctorConsultationFormApp()),
+              );
+            },
+            child: Text('Appointment'),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+
