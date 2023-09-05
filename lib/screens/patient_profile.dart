@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'login_page.dart';
+
 void main() {
   runApp(const PatientProfile());
 }
@@ -573,9 +575,7 @@ class ProfileScreen01 extends StatelessWidget {
                                       height: 23.56,
                                       clipBehavior: Clip.antiAlias,
                                       decoration: BoxDecoration(),
-                                      child: Stack(children: [
-
-                                      ]),
+                                      child: Stack(children: []),
                                     ),
                                   ),
                                   Positioned(
@@ -586,11 +586,39 @@ class ProfileScreen01 extends StatelessWidget {
                                       height: 22,
                                       clipBehavior: Clip.antiAlias,
                                       decoration: BoxDecoration(),
-                                      child: Stack(children: [
-
-                                      ]),
+                                      child: Stack(children: []),
                                     ),
                                   ),
+                                  Container(
+                                    // The parent container
+                                    width: double.infinity, // Adjust as needed
+                                    height: double.infinity, // Adjust as needed
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 0,
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 25,
+                                          child: Center(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                // Add your logout logic here
+                                                // After logging out, navigate to the LoginPage
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => LoginPage()),
+                                                );
+                                              },
+                                              child: Text("Logout"),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+
+
                                 ],
                               ),
                             ),
@@ -603,10 +631,14 @@ class ProfileScreen01 extends StatelessWidget {
                 ),
               );
             }
+
           },
         ),
       ),
     ),
+
     );
+
   }
+
 }

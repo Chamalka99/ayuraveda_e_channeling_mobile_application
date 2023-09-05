@@ -36,6 +36,12 @@ dependencies:
   dio: ^4.0.0
   http: ^0.13.3
   shared_preferences: ^2.0.8
+  flutter_stripe: ^9.2.0
+  sqflite_common_ffi: ^2.1.0+1
+  path: ^1.8.0
+  payhere_mobilesdk_flutter: ^3.0.7
+  quickalert:
+
 
 
 

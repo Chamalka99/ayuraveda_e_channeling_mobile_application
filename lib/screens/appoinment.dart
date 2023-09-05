@@ -1,5 +1,7 @@
+import 'dart:convert';
+import 'package:quickalert/quickalert.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(DoctorConsultationFormApp());
@@ -9,7 +11,7 @@ class DoctorConsultationFormApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Doctor Consultation Form',
+      title: 'Patient Appointment Form',
       home: DoctorConsultationForm(),
     );
   }
@@ -22,15 +24,43 @@ class DoctorConsultationForm extends StatefulWidget {
 
 class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _mobileController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   TextEditingController _symptomsController = TextEditingController();
+
+  Future<void> _selectDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
+  Future<void> _selectTime() async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (pickedTime != null && pickedTime != _selectedTime) {
+      setState(() {
+        _selectedTime = pickedTime;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctor Consultation Form'),
+        title: Text('Patient Appointment Form'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -42,11 +72,11 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
               decoration: InputDecoration(labelText: 'Patient Name'),
             ),
             TextFormField(
-              controller: _nameController,
+              controller: _emailController,
               decoration: InputDecoration(labelText: 'Patient Email'),
             ),
             TextFormField(
-              controller: _nameController,
+              controller: _mobileController,
               decoration: InputDecoration(labelText: 'Mobile Number'),
             ),
             SizedBox(height: 16),
@@ -91,60 +121,69 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
               maxLines: 5,
               decoration: InputDecoration(labelText: 'Symptoms'),
             ),
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                // Handle form submission here
-                _submitForm();
-              },
-              child: Text('Submit'),
-            ),
+            Column(
+              children: [
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    _submitForm();
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.success,
+                      text: 'Form Submit is Successfully!',
+                      autoCloseDuration: const Duration(seconds: 2),
+                    );
+                  },
+                  child: Text('Submit'),
+                ),
+              ],
+            )
+
           ],
         ),
       ),
     );
   }
 
-  void _submitForm() {
-    // Get the values from the controllers and process them
-    String name = _nameController.text;
-    String dob = "${_selectedDate.toLocal()}".split(' ')[0];
-    String appointmentTime = "${_selectedTime.format(context)}";
-    String symptoms = _symptomsController.text;
+  void _submitForm() async {
+    String apiUrl = 'http://localhost/ayuravedaapp/patientappoinment.php/appoinment'; // Replace with your PHP script URL
 
-    // You can now send this data to a backend or perform any other action
-    // For demonstration purposes, let's print the data for now.
-    print('Patient Name: $name');
-    print('Date of Birth: $dob');
-    print('Appointment Time: $appointmentTime');
-    print('Symptoms: $symptoms');
-  }
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
+    };
 
-  Future<void> _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
-    );
-    if (picked != null && picked != _selectedTime) {
-      setState(() {
-        _selectedTime = picked;
-      });
+    final Map<String, dynamic> formData = {
+      'patient_name': _nameController.text,
+      'patient_email': _emailController.text,
+      'patient_mobile_number': _mobileController.text,
+      'patient_bdy': _selectedDate.toString(),
+      'appoinment_date_time': _selectedTime.format(context),
+      'symptoms': _symptomsController.text,
+    };
+
+// Convert formData to a JSON string
+    final jsonData = json.encode(formData);
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        // Set the content type to JSON
+        body: jsonData, // Send the JSON data as the request body
+      );
+
+      if (response.statusCode == 200) {
+        // Successful submission, handle accordingly
+        print(response.body);
+        print('Form submitted successfully');
+      } else {
+        // Handle errors
+        print('Failed to submit form');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Exception: $e');
     }
   }
 }
-
-

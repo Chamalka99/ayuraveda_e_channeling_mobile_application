@@ -3,6 +3,10 @@ import 'package:ayuraveda_e_channeling/screens/appoinment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'Doctor_Available_Time.dart';
+import 'appoinment_view.dart';
+
+
 
 
 class YourWidget extends StatefulWidget {
@@ -12,6 +16,7 @@ class YourWidget extends StatefulWidget {
 
 class _MyComponentState extends State<YourWidget> {
   List<Doctorlist> doctorinformation = [];
+  List<Doctorlist> filteredDoctorInformation = [];
 
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse('http://localhost/ayuravedaapp/doctorinformation.php/doctorinformation'));
@@ -19,16 +24,27 @@ class _MyComponentState extends State<YourWidget> {
       final data = json.decode(response.body);
       setState(() {
         doctorinformation = List<Doctorlist>.from(data.map((item) => Doctorlist.fromJson(item)));
+        filteredDoctorInformation = doctorinformation; // Initialize filtered list
       });
     } else {
       throw Exception('Failed to fetch data');
     }
+  }
+  void filterDoctors(String query) {
+    setState(() {
+      filteredDoctorInformation = doctorinformation.where((doctor) {
+        return doctor.name.toLowerCase().contains(query.toLowerCase()) ||
+            doctor.specialities.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
   }
 
   @override
   void initState() {
     super.initState();
     fetchData();
+
+
   }
 
   @override
@@ -37,40 +53,121 @@ class _MyComponentState extends State<YourWidget> {
       appBar: AppBar(
         title: Text('Find Doctors'),
       ),
-      body: ListView.builder(
-        itemCount: doctorinformation.length,
-        itemBuilder: (context, index) {
-          final doctorInfo = doctorinformation[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DoctorDetailsScreen(doctorInfo: doctorInfo),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.green,
+              ),
+              child: Text(
+                'හෙළ සුව',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
                 ),
-              );
-            },
-            child: DoctorInf(doctorinfor: doctorInfo),
-          );
-        },
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.category),
+              title: Text(
+                'Doctor Category',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              onTap: () {
+                // Perform action
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.approval_rounded),
+              title: Text(
+                'My Appoinment',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Appointment(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.report_outlined),
+              title: Text(
+                'Report',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              onTap: () {
+                // Perform action
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: TextField(
+              onChanged: (value) {
+                filterDoctors(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Search for doctors...',
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredDoctorInformation.length,
+              itemBuilder: (context, index) {
+                final doctorInfo = filteredDoctorInformation[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DoctorDetailsScreen(doctorInfo: doctorInfo),
+                      ),
+                    );
+                  },
+                  child: DoctorInf(doctorinfor: doctorInfo),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class Doctorlist {
+  final int id;
   final String name;
   final String specialities;
-  final String experience;
+
   // Add more properties as needed
 
-  Doctorlist({required this.name, required this.specialities,required this.experience});
+  Doctorlist({required this.id,required this.name, required this.specialities});
 
   factory Doctorlist.fromJson(Map<String, dynamic> json) {
     return Doctorlist(
-        name: json['doctor_name'],
-        specialities: json['doctor_specialities'],
-        experience: json['doctor_experience']
+
+        id: json['id'],
+        name: json['name'],
+        specialities: json['specialities'],
+
+
     );
   }
 }
@@ -115,13 +212,6 @@ class DoctorInf extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    doctorinfor.experience,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  Text(
                     doctorinfor.specialities,
                     style: TextStyle(
                       fontSize: 16,
@@ -142,11 +232,42 @@ class DoctorInf extends StatelessWidget {
 
 
 
-
-class DoctorDetailsScreen extends StatelessWidget {
+class DoctorDetailsScreen extends StatefulWidget {
   final Doctorlist doctorInfo;
 
   DoctorDetailsScreen({required this.doctorInfo});
+
+  @override
+  _DoctorDetailsScreenState createState() => _DoctorDetailsScreenState();
+}
+
+class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
+  List<String> availableTimeSlots = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAvailableTimeSlots();
+  }
+
+  Future<void> fetchAvailableTimeSlots() async {
+    try {
+      final response = await http.get(Uri.parse('http://localhost/ayuravedaapp/doctorinformation.php/doctor_availability'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data is List<dynamic>) {
+          setState(() {
+            availableTimeSlots = data.cast<String>();
+          });
+        }
+      } else {
+        print('Failed to fetch available time slots');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,16 +285,16 @@ class DoctorDetailsScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.black, // Change the color as needed
-                        width: 2.0, // Set the desired width for the outline
+                        color: Colors.black,
+                        width: 2.0,
                       ),
                     ),
                     child: ClipOval(
                       child: Image.asset(
-                        "assets/images/E1.png", // Replace this with the image URL or local asset path
-                        height: 200, // Set the desired height of the circular image
-                        width: 200, // Set the desired width of the circular image
-                        fit: BoxFit.cover, // Adjust the image's size to cover the entire area
+                        "assets/images/E1.png",
+                        height: 200,
+                        width: 200,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -184,7 +305,7 @@ class DoctorDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        doctorInfo.name,
+                        widget.doctorInfo.name,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -192,15 +313,7 @@ class DoctorDetailsScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Specialities: ${doctorInfo.specialities}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Experience: ${doctorInfo.experience}',
+                        'Specialties: ${widget.doctorInfo.specialities}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
@@ -209,13 +322,45 @@ class DoctorDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (availableTimeSlots.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Available Time Slots:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        for (String timeSlot in availableTimeSlots)
+                          Text(
+                            timeSlot,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
           ElevatedButton(
             onPressed: () {
-              // Add the functionality to book an appointment here
-              // For example, you can navigate to the DoctorConsultationFormApp screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DoctorAvailabilityApp()),
+              );
+            },
+            child: Text('Doctor Available Time'),
+          ),
+          ElevatedButton(
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DoctorConsultationFormApp()),
@@ -223,10 +368,10 @@ class DoctorDetailsScreen extends StatelessWidget {
             },
             child: Text('Appointment'),
           ),
-
         ],
       ),
     );
   }
 }
+
 

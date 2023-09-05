@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:ayuraveda_e_channeling/screens/product_category.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class MyComponent extends StatefulWidget {
   @override
@@ -61,15 +64,26 @@ class _MyComponentState extends State<MyComponent> {
             ListTile(
               title: Text('Product Category'),
               onTap: () {
-                // Perform action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductCategoryFormApp(),
+                  ),
+                );
               },
             ),
             ListTile(
               title: Text('Favourite'),
               onTap: () {
-                // Perform action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FavoriteForm(),
+                  ),
+                );
               },
             ),
+
             ListTile(
               title: Text('My orders '),
               onTap: () {
@@ -196,7 +210,7 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
                 children: [
                   Text(
-                    product.name,
+                  product.name,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -209,6 +223,15 @@ class ProductCard extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
+                  Text(
+                    product.description,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+
                 ],
               ),
             ),
@@ -224,17 +247,43 @@ class SingleProductView extends StatefulWidget {
 
   SingleProductView({required this.product});
 
+
   @override
   _SingleProductViewState createState() => _SingleProductViewState();
+
 }
 
+
+
+
 class _SingleProductViewState extends State<SingleProductView> {
+  bool isFavorite = false; // Flag to track whether the product is a favorite
   List<CartItemView> cartItems = [];
+
+  void toggleFavorite() {
+    setState(() {
+      isFavorite = !isFavorite; // Toggle the favorite status
+    });
+
+    if (isFavorite) {
+      // Add the product to the favorite list when it's marked as a favorite
+      favoriteProducts.add(widget.product);
+    } else {
+      // Remove the product from the favorite list when it's unmarked as a favorite
+      favoriteProducts.remove(widget.product);
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FavoriteForm()),
+    );
+  }
+
+
 
   @override
   void initState() {
     super.initState();
-     loadCart();
+    loadCart();
   }
 
   void _showAddToCartDialog(BuildContext context) {
@@ -281,8 +330,9 @@ class _SingleProductViewState extends State<SingleProductView> {
               actions: [
                 TextButton(
                   onPressed: () {
-                   cartItems.add(new CartItemView(widget.product.id, quantity));
-                    saveCart(cartItems); 
+                    cartItems.add(
+                        new CartItemView(widget.product.id, quantity));
+                    saveCart(cartItems);
                     // TODO: Add the product to the cart with the selected quantity
                     Navigator.of(context).pop();
                   },
@@ -301,10 +351,13 @@ class _SingleProductViewState extends State<SingleProductView> {
       },
     );
   }
+
   static const String _kCartKey = 'cart_key';
+
   static Future<void> saveCart(List<CartItemView> cartItems) async {
     final prefs = await SharedPreferences.getInstance();
-    final List<Map<String, dynamic>> cartList = cartItems.map((item) => item.toMap()).toList();
+    final List<Map<String, dynamic>> cartList = cartItems.map((item) =>
+        item.toMap()).toList();
     await prefs.setString(_kCartKey, jsonEncode(cartList));
   }
 
@@ -314,12 +367,12 @@ class _SingleProductViewState extends State<SingleProductView> {
     final String cartString = prefs.getString(_kCartKey) ?? '';
     print(cartString);
     if (cartString.isEmpty) {
-      cartItems=[];
+      cartItems = [];
       return;
     }
 
     final List<dynamic> cartList = jsonDecode(cartString);
-    cartItems= cartList.map((item) => CartItemView.fromMap(item)).toList();
+    cartItems = cartList.map((item) => CartItemView.fromMap(item)).toList();
   }
 
 
@@ -342,6 +395,8 @@ class _SingleProductViewState extends State<SingleProductView> {
       },
     );
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -349,7 +404,8 @@ class _SingleProductViewState extends State<SingleProductView> {
         title: Text('Product Details'),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16), // Add left and right padding
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        // Add left and right padding
         child: ListView(
           children: [
             Padding(
@@ -397,7 +453,8 @@ class _SingleProductViewState extends State<SingleProductView> {
                         padding: EdgeInsets.all(15.0),
                         child: Text(
                           'Add to cart',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 16,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       onPressed: () {
@@ -405,6 +462,13 @@ class _SingleProductViewState extends State<SingleProductView> {
                         //
                       },
                     ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                    onPressed: toggleFavorite,
                   ),
                 ],
               ),
@@ -414,8 +478,89 @@ class _SingleProductViewState extends State<SingleProductView> {
       ),
     );
   }
-
-
 }
+class FavoriteForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Favorite Products'),
+      ),
+      body: ListView.builder(
+        itemCount: favoriteProducts.length,
+        itemBuilder: (context, index) {
+          final product = favoriteProducts[index];
+          return ListTile(
+            title: Text(product.name),
+            subtitle: Text('Price: ${product.price}'),
+            // Add other product details or actions here...
+          );
+        },
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    title: 'Ayuraveda App',
+    theme: ThemeData(
+      primarySwatch: Colors.blue,
+    ),
+    home: MyComponent(),
+  ));
+}
+
+// Create a list to store favorite products
+List<Product> favoriteProducts = [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

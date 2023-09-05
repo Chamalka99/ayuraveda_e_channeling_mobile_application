@@ -6,6 +6,7 @@ import '../screens/cart.dart';
 import '../screens/find_doctors.dart';
 import '../screens/home.dart';
 import '../screens/patient_profile.dart';
+import '../screens/product_category.dart';
 
 
 class NavBar extends StatefulWidget {
@@ -18,7 +19,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [HomeScreen(),YourWidget(),MyComponent(),CartScreen(),PatientProfile()];
+  final List<Widget> _screens = [HomeScreen(),YourWidget(),MyComponent(),CartScreen(),PatientProfile(),ProductCategoryFormApp()];
 
   @override
   Widget build(BuildContext context) {
