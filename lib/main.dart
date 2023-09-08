@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           '/profile': (context) => PatientProfile(),
           '/cart': (context) => CartScreen(),
           '/doctorreg': (context) => YourWidget(),
-          '/appoinment': (context) => DoctorConsultationFormApp(),
+          '/appoinment': (context) => DoctorConsultationForm(id:25), // Replace 123 with the actual doctor ID you want to pass
           '/appinmenr':(context)=> Appointment(),
 
 

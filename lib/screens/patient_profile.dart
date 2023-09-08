@@ -7,6 +7,10 @@ import 'login_page.dart';
 void main() {
   runApp(const PatientProfile());
 }
+
+
+
+
 class Patient {
   final String name;
   final String lastName;
@@ -52,6 +56,7 @@ class ApiService {
 class PatientProfile extends StatelessWidget {
   const PatientProfile({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return ProfileScreen01() ;
@@ -74,6 +79,9 @@ class ProfileScreen01 extends StatelessWidget {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        appBar: AppBar(
+          title: Text('Patient Profile'),
+        ),
         body: SingleChildScrollView( // Wrap the FutureBuilder with SingleChildScrollView
         child: FutureBuilder<Patient>(
         future: apiService.getPatientDetails("http://localhost/ayuravedaapp/test.php/singlepatient/16"),

@@ -11,6 +11,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController _searchController = TextEditingController();
 
+
     return Scaffold(
       backgroundColor: const Color(0xFFE9EDF5), // Set the background color
       body: SingleChildScrollView(

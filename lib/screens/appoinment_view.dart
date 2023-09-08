@@ -1,91 +1,165 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(Appointment());
 }
 
-class Appointment extends StatelessWidget {
+class AppointmentCard extends StatelessWidget {
+  final String doctorName;
+  final String appointmentDate;
+  final String appointmentTime;
+  final String appointmentStatus;
+
+  AppointmentCard({
+    required this.doctorName,
+    required this.appointmentDate,
+    required this.appointmentTime,
+    required this.appointmentStatus,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Appointment App',
-      home: AppointmentList(),
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.all(7),
+      child: Padding(
+        padding: EdgeInsets.all(7),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Doctor: $doctorName',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Date: $appointmentDate',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Time: $appointmentTime',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: appointmentStatus == 'Confirmed'
+                      ? Colors.green
+                      : Colors.red,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  'Status: $appointmentStatus',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: appointmentStatus == 'Confirmed'
+                        ? Colors.green
+                        : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class AppointmentList extends StatefulWidget {
+class Appointment extends StatefulWidget {
   @override
-  _AppointmentListState createState() => _AppointmentListState();
+  _AppointmentState createState() => _AppointmentState();
 }
 
-class _AppointmentListState extends State<AppointmentList> {
-  Future<List<Map<String, dynamic>>> fetchAppointments() async {
-    final response = await http.get(Uri.parse('http://localhost/ayuravedaapp/patientappoinment.php/appoinment'));
+class _AppointmentState extends State<Appointment> {
+  List<AppointmentData> appointments = [];
 
-    if (response.statusCode == 200) {
-      final dynamic data = json.decode(response.body);
+  @override
+  void initState() {
+    super.initState();
+    fetchAppointmentsFromServer();
+  }
 
-      if (data != null && data.containsKey('appoinment')) {
-        final List<dynamic> appointments = data['appoinment'];
+  Future<void> fetchAppointmentsFromServer() async {
+    // Replace with your server URL
+    final url = Uri.parse('http://localhost/ayuravedaapp/patientappoinment.php/appoinmentShow');
 
-        return appointments.cast<Map<String, dynamic>>();
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        final List<AppointmentData> fetchedAppointments = data
+            .map((item) => AppointmentData.fromJson(item))
+            .toList();
+
+        setState(() {
+          appointments = fetchedAppointments;
+        });
       } else {
-        return []; // Return an empty list if 'appointments' key is missing
+        throw Exception('Failed to load data from the server');
       }
-    } else {
-      throw Exception('Failed to load appointments');
+    } catch (error) {
+      print(error);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Appointments'),
-      ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchAppointments(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Appointment Details'),
+        ),
+        body: ListView(
+          children: appointments.map((appointment) {
+            return AppointmentCard(
+              doctorName: appointment.doctorName,
+              appointmentDate: appointment.appointmentDate,
+              appointmentTime: appointment.appointmentTime,
+              appointmentStatus: appointment.appointmentStatus,
             );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            final appointments = snapshot.data;
-
-            if (appointments == null || appointments.isEmpty) {
-              return Center(
-                child: Text('No appointments available.'),
-              );
-            }
-
-            return ListView.builder(
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                final appointment = appointments[index];
-
-                if (appointment == null) {
-                  return SizedBox.shrink(); // Skip null entries
-                }
-
-                return ListTile(
-                  title: Text(appointment['patient_name'] ?? ''),
-                  subtitle: Text(appointment['appoinment_date_time'] ?? ''),
-                  // Add other appointment details here
-                );
-              },
-            );
-          }
-        },
+          }).toList(),
+        ),
       ),
     );
   }
 }
+
+class AppointmentData {
+  final String doctorName;
+  final String appointmentDate;
+  final String appointmentTime;
+  final String appointmentStatus;
+
+  AppointmentData({
+    required this.doctorName,
+    required this.appointmentDate,
+    required this.appointmentTime,
+    required this.appointmentStatus,
+  });
+
+  factory AppointmentData.fromJson(Map<String, dynamic> json) {
+    return AppointmentData(
+      doctorName: json['doctorName'],
+      appointmentDate: json['appointmentDate'],
+      appointmentTime: json['appointmentTime'],
+      appointmentStatus: json['appointmentStatus'],
+    );
+  }
+}
+
+
 

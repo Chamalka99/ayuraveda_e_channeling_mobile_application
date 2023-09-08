@@ -148,7 +148,11 @@ class CartItemsScreen extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     print("the length is  ${widget.cartItems.length}");
-    return SafeArea(
+    return Scaffold( // Wrap your code with a Scaffold
+        appBar: AppBar( // Add an AppBar
+        title: Text('Cart Items'), // Set the title of the AppBar
+    ),
+    body: SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
@@ -213,6 +217,7 @@ class CartItemsScreen extends State<CartScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 

@@ -1,23 +1,13 @@
 import 'dart:convert';
-import 'package:quickalert/quickalert.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-void main() {
-  runApp(DoctorConsultationFormApp());
-}
-
-class DoctorConsultationFormApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Patient Appointment Form',
-      home: DoctorConsultationForm(),
-    );
-  }
-}
+import 'package:quickalert/quickalert.dart';
 
 class DoctorConsultationForm extends StatefulWidget {
+  final int id;
+
+  DoctorConsultationForm({required this.id});
+
   @override
   _DoctorConsultationFormState createState() => _DoctorConsultationFormState();
 }
@@ -121,24 +111,11 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
               maxLines: 5,
               decoration: InputDecoration(labelText: 'Symptoms'),
             ),
-            Column(
-              children: [
-                SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    _submitForm();
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.success,
-                      text: 'Form Submit is Successfully!',
-                      autoCloseDuration: const Duration(seconds: 2),
-                    );
-                  },
-                  child: Text('Submit'),
-                ),
-              ],
-            )
-
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _submitForm,
+              child: Text('Submit'),
+            ),
           ],
         ),
       ),
@@ -150,7 +127,6 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
 
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
-
     };
 
     final Map<String, dynamic> formData = {
@@ -160,30 +136,47 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
       'patient_bdy': _selectedDate.toString(),
       'appoinment_date_time': _selectedTime.format(context),
       'symptoms': _symptomsController.text,
+      'doctor_id': widget.id.toString(), // Pass the doctor's ID here
     };
 
-// Convert formData to a JSON string
+    // Convert formData to a JSON string
     final jsonData = json.encode(formData);
 
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {"Content-Type": "application/json"},
-        // Set the content type to JSON
-        body: jsonData, // Send the JSON data as the request body
+        body: jsonData,
       );
 
       if (response.statusCode == 200) {
         // Successful submission, handle accordingly
         print(response.body);
-        print('Form submitted successfully');
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          text: 'Form submitted successfully!',
+          autoCloseDuration: const Duration(seconds: 2),
+        );
       } else {
         // Handle errors
         print('Failed to submit form');
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: 'Failed to submit form.',
+          autoCloseDuration: const Duration(seconds: 2),
+        );
       }
     } catch (e) {
       // Handle exceptions
       print('Exception: $e');
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        text: 'An error occurred: $e',
+        autoCloseDuration: const Duration(seconds: 2),
+      );
     }
   }
 }

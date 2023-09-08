@@ -3,7 +3,7 @@ import 'package:ayuraveda_e_channeling/screens/appoinment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'Doctor_Available_Time.dart';
+
 import 'appoinment_view.dart';
 
 
@@ -181,54 +181,58 @@ class DoctorInf extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.all(9),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
       color: Colors.white,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Image.asset(
-              "assets/images/E1.png",
-              height: 125, // Adjust the height here
-              fit: BoxFit.cover,
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    doctorinfor.name,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    doctorinfor.specialities,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
+      child: Padding(
+        padding: EdgeInsets.all(10), // Add padding here
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Image.asset(
+                "assets/images/E1.png",
+                height: 120, // Adjust the height here
+                width:120,
+
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10), // Adjust horizontal padding here
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      doctorinfor.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      doctorinfor.specialities,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-
 }
+
 
 
 
@@ -247,12 +251,12 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    fetchAvailableTimeSlots();
+    fetchAvailableTimeSlots(widget.doctorInfo.id);
   }
 
-  Future<void> fetchAvailableTimeSlots() async {
+  Future<void> fetchAvailableTimeSlots(int doc_id) async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/ayuravedaapp/doctorinformation.php/doctor_availability'));
+      final response = await http.get(Uri.parse('http://localhost/ayuravedaapp/doctorinformation.php/doctor_availability/?doctor_id='+doc_id.toString()));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -336,17 +340,38 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        for (String timeSlot in availableTimeSlots)
-                          Text(
-                            timeSlot,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
+                        DataTable(
+                          columns: [
+                            DataColumn(
+                              label: Text(
+                                'Time Slot',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
+                          rows: availableTimeSlots.map((timeSlot) {
+                            return DataRow(
+                              cells: [
+                                DataCell(
+                                  Text(
+                                    timeSlot,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
                       ],
                     ),
                   ),
+
               ],
             ),
           ),
@@ -354,20 +379,14 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DoctorAvailabilityApp()),
-              );
-            },
-            child: Text('Doctor Available Time'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DoctorConsultationFormApp()),
+                MaterialPageRoute(
+                  builder: (context) => DoctorConsultationForm(id: widget.doctorInfo.id),
+                ),
               );
             },
             child: Text('Appointment'),
           ),
+
         ],
       ),
     );
