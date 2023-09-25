@@ -10,7 +10,7 @@ class RegistrationFormApp extends StatelessWidget {
     return MaterialApp(
       title: 'Doctor Registration Form',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        backgroundColor:  Color(0xFF0F3446),
       ),
       home: RegistrationForm(),
     );

@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:ayuraveda_e_channeling/screens/appoinment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-
 import 'appoinment_view.dart';
 
 
@@ -52,22 +50,39 @@ class _MyComponentState extends State<YourWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Doctors'),
+        backgroundColor:  Color(0xFF0F3446),
       ),
       drawer: Drawer(
         child: ListView(
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Color(0xFF0F3446),
               ),
-              child: Text(
-                'හෙළ සුව',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'හෙළ සුව',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                    ),
+                  ),
+                  SizedBox(height: 8), // Add some space between the app name and the quote
+                  Text(
+                    '"Wherever you are, whenever you need, Hela Suwa is here."',
+                      style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17, // You can adjust the font size as needed
+                        fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
+
             ListTile(
               leading: const Icon(Icons.category),
               title: Text(
@@ -179,18 +194,20 @@ class DoctorInf extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      margin: EdgeInsets.all(9),
-      shape: RoundedRectangleBorder(
+    return Container( // Wrap with Container
+        color: Color(0xFFDDDFE5), // Set your desired background color here
+        child: Card(
+        elevation: 5,
+        margin: EdgeInsets.all(9),
+        shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
-      ),
-      color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(10), // Add padding here
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        ),
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(10), // Add padding here
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Expanded(
               flex: 1,
               child: Image.asset(
@@ -213,15 +230,40 @@ class DoctorInf extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                     ),
                     Text(
                       doctorinfor.specialities,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.normal,
+                        color: Colors.black,
                       ),
                     ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Appointment Fee: ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black, // Set the color to black
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'Rs.2500.00',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red, // Set the color to red
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+
                   ],
                 ),
               ),
@@ -229,6 +271,7 @@ class DoctorInf extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
@@ -277,104 +320,126 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctor Details'),
+        title: Text(
+          'Doctor Details',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Color(0xFF0F3446),
       ),
       body: Column(
         children: [
-          Expanded(
-            child: ListView(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: CircleAvatar(
+              radius: 100,
+              backgroundColor: Colors.white,
+              child: ClipOval(
+                child: Image.asset(
+                  "assets/images/E1.png",
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        "assets/images/E1.png",
-                        height: 200,
-                        width: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                Text(
+                  widget.doctorInfo.name,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                SizedBox(height: 10),
+                Text(
+                  'Specialties: ${widget.doctorInfo.specialities}',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 10),
+                RichText(
+                  text: TextSpan(
                     children: [
-                      Text(
-                        widget.doctorInfo.name,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Specialties: ${widget.doctorInfo.specialities}',
+                      TextSpan(
+                        text: 'Appointment Fee: ',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
+                          color: Colors.black, // Set the color to black
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Rs.2500.00',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red, // Set the color to red
                         ),
                       ),
                     ],
                   ),
-                ),
-                if (availableTimeSlots.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Available Time Slots:',
+                )
+              ],
+            ),
+          ),
+          if (availableTimeSlots.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Available Time Slots:',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  DataTable(
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          'Time Slot',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        DataTable(
-                          columns: [
-                            DataColumn(
-                              label: Text(
-                                'Time Slot',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      ),
+                    ],
+                    rows: availableTimeSlots.map((timeSlot) {
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Text(
+                              timeSlot,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
-                          ],
-                          rows: availableTimeSlots.map((timeSlot) {
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                  Text(
-                                    timeSlot,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
-
-              ],
+                ],
+              ),
             ),
-          ),
+          SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -384,9 +449,16 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                 ),
               );
             },
-            child: Text('Appointment'),
+            style: ElevatedButton.styleFrom(
+              primary: Color(0xFF0F3446),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              textStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            child: Text('Schedule Appointment'),
           ),
-
         ],
       ),
     );

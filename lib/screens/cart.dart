@@ -27,10 +27,16 @@ class CartItemView {
 }
 
 void  api_data_pass( List<CartItemView> cartItems)async{
+  final prefs = await SharedPreferences.getInstance();
+  final String? patientId = prefs.getString('patient_id');
 
+  if (patientId == null) {
+    return;
+  }
+  print(patientId);
     // Construct the JSON object for the request
     Map<String, dynamic> requestData = {
-      'customer_id': 5,
+      'customer_id': patientId,
       'product_quantities': {},
     };
 
@@ -70,6 +76,11 @@ class CartScreen extends StatefulWidget {
 
 class CartItemsScreen extends State<CartScreen> {
   static const String _kCartKey = 'cart_key';
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _mobileController = TextEditingController();
 
   static Future<void> saveCart(List<CartItemView> cartItems) async {
     final prefs = await SharedPreferences.getInstance();
@@ -147,78 +158,117 @@ class CartItemsScreen extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("the length is  ${widget.cartItems.length}");
-    return Scaffold( // Wrap your code with a Scaffold
-        appBar: AppBar( // Add an AppBar
-        title: Text('Cart Items'), // Set the title of the AppBar
-    ),
-    body: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Container(
-          decoration: BoxDecoration(color: Colors.white),
-          child: Column(
-            children: [
-              // Display cart items with product details
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.cartItems.length,
-                  itemBuilder: (context, index) {
-                    CartItemView cartItem = widget.cartItems[index];
-                    return FutureBuilder<Map<String, dynamic>>(
-                      future: fetchProductDetails(cartItem.id),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error fetching product details');
-                        } else {
-                          Map<String, dynamic> productData = snapshot.data!;
-                          String productName = productData['product_name'];
-                          double productPrice = double.parse(productData['product_price']);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Cart Items'),
+        backgroundColor: Color(0xFF0F3446),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
+            decoration: BoxDecoration(color: Colors.white),
+            child: Column(
+              children: [
+                // Display cart items with product details
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.cartItems.length,
+                    itemBuilder: (context, index) {
+                      CartItemView cartItem = widget.cartItems[index];
+                      return FutureBuilder<Map<String, dynamic>>(
+                        future: fetchProductDetails(cartItem.id),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error fetching product details');
+                          } else {
+                            Map<String, dynamic> productData = snapshot.data!;
+                            String productName = productData['product_name'];
+                            double productPrice = double.parse(
+                                productData['product_price']);
 
-                          return Container(
-                            color: Colors.red, // Set the background color to red
-                            child: Card(
-                              child: ListTile(
-                                title: Text(productName),
-                                subtitle: Text('Quantity: ${cartItem.quantity.toString()}'),
-                                trailing: Text('Price: ${productPrice * cartItem.quantity}'),
+                            return Container(
+                              color: Colors.red,
+                              // Set the background color to red
+                              child: Card(
+                                child: ListTile(
+                                  title: Text(productName),
+                                  subtitle: Text('Quantity: ${cartItem.quantity
+                                      .toString()}'),
+                                  trailing: Text('Price: ${productPrice *
+                                      cartItem.quantity}'),
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
-              ElevatedButton(
-                onPressed: _confirmAndCheckout,
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue, // Set the background color
-                  onPrimary: Colors.white, // Set the text color
-                  elevation: 5, // Set the button's elevation
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Set button's corner radius
-                  ),
-                  padding:EdgeInsets.symmetric(vertical:16,horizontal: 32), // Set padding
-                ),
-                child: Text(
-                  'Checkout',
-                  style: TextStyle(
-                    fontSize: 18, // Set text font size
+                            );
+                          }
+                        },
+                      );
+                    },
                   ),
                 ),
-              )
 
+                // Delivery Information Form
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Delivery Information',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(labelText: 'Name'),
+                      ),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(labelText: 'Email'),
+                      ),
+                      TextFormField(
+                        controller: _addressController,
+                        decoration: InputDecoration(labelText: 'Address'),
+                      ),
+                      TextFormField(
+                        controller: _mobileController,
+                        decoration: InputDecoration(labelText: 'Mobile Number'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Checkout Button
+          ElevatedButton(
+            onPressed: _confirmAndCheckout,
+            style: ElevatedButton.styleFrom(
+              primary: Color(0xFF0F3446), // Set the background color
+              onPrimary: Colors.white, // Set the text color
+              elevation: 5, // Set the button's elevation
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ), // Set button's corner radius
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+            ),
+            child: Text(
+              'Checkout',
+              style: TextStyle(
+                fontSize: 18, // Set text font size
+              ),
+            ),
+          )
             ],
+            ),
           ),
         ),
       ),
-    ),
     );
   }
-
 }

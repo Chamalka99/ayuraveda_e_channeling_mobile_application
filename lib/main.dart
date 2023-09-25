@@ -3,6 +3,7 @@ import 'package:ayuraveda_e_channeling/screens/Store.dart';
 import 'package:ayuraveda_e_channeling/screens/appoinment.dart';
 import 'package:ayuraveda_e_channeling/screens/appoinment_view.dart';
 import 'package:ayuraveda_e_channeling/screens/find_doctors.dart';
+import 'package:ayuraveda_e_channeling/screens/payment.dart';
 import 'package:flutter/material.dart';
 
 
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
           '/doctorreg': (context) => YourWidget(),
           '/appoinment': (context) => DoctorConsultationForm(id:25), // Replace 123 with the actual doctor ID you want to pass
           '/appinmenr':(context)=> Appointment(),
+          '/payment':(context)=> payment(),
 
 
 

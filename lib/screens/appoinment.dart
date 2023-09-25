@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:quickalert/quickalert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorConsultationForm extends StatefulWidget {
   final int id;
@@ -17,6 +18,7 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _mobileController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  DateTime _selectedAppoinmentDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   TextEditingController _symptomsController = TextEditingController();
 
@@ -30,6 +32,20 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
+      });
+    }
+  }
+
+  Future<void> _selectApoinmentDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedAppoinmentDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null && pickedDate != _selectedAppoinmentDate) {
+      setState(() {
+        _selectedAppoinmentDate = pickedDate;
       });
     }
   }
@@ -51,6 +67,7 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Patient Appointment Form'),
+        backgroundColor:  Color(0xFF0F3446),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -82,6 +99,24 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
                   children: <Widget>[
                     Text(
                       "${_selectedDate.toLocal()}".split(' ')[0],
+                    ),
+                    Icon(Icons.calendar_today),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: _selectApoinmentDate,
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Appoinment date',
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      "${_selectedAppoinmentDate.toLocal()}".split(' ')[0],
                     ),
                     Icon(Icons.calendar_today),
                   ],
@@ -124,19 +159,27 @@ class _DoctorConsultationFormState extends State<DoctorConsultationForm> {
 
   void _submitForm() async {
     String apiUrl = 'http://localhost/ayuravedaapp/patientappoinment.php/appoinment'; // Replace with your PHP script URL
+    final prefs = await SharedPreferences.getInstance();
+    final String? patientId = prefs.getString('patient_id');
 
+    if (patientId == null) {
+      return;
+    }
+    print(patientId);
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
 
     final Map<String, dynamic> formData = {
+      'patient_id':patientId,
       'patient_name': _nameController.text,
       'patient_email': _emailController.text,
       'patient_mobile_number': _mobileController.text,
       'patient_bdy': _selectedDate.toString(),
+      'appoinment_date': _selectedAppoinmentDate.toString(),
       'appoinment_date_time': _selectedTime.format(context),
       'symptoms': _symptomsController.text,
-      'doctor_id': widget.id.toString(), // Pass the doctor's ID here
+      'doctor_id': widget.id.toString()// Pass the doctor's ID here
     };
 
     // Convert formData to a JSON string

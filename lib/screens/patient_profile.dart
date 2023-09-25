@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'login_page.dart';
@@ -40,8 +41,12 @@ class ApiService {
 
   Future<Patient> getPatientDetails(String patientId) async {
 
+    final prefs = await SharedPreferences.getInstance();
+    final String? patientId = prefs.getString('patient_id');
 
-    final response = await http.get(Uri.parse(apiUrl));
+
+    print(patientId);
+    final response = await http.get(Uri.parse(apiUrl+patientId.toString()));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       return Patient.fromJson(jsonData);
@@ -64,7 +69,9 @@ class PatientProfile extends StatelessWidget {
 }
 
 class ProfileScreen01 extends StatelessWidget {
-  final ApiService apiService = ApiService("http://localhost/ayuravedaapp/test.php/singlepatient/23");
+
+
+  final ApiService apiService = ApiService("http://localhost/ayuravedaapp/test.php/singlepatient/");
   @override
   Widget build(BuildContext context) {
     final Future<Patient> dummyPatient = Future.delayed(Duration(seconds: 2), () {
@@ -81,10 +88,11 @@ class ProfileScreen01 extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: Text('Patient Profile'),
+          backgroundColor:  Color(0xFF0F3446),
         ),
         body: SingleChildScrollView( // Wrap the FutureBuilder with SingleChildScrollView
         child: FutureBuilder<Patient>(
-        future: apiService.getPatientDetails("http://localhost/ayuravedaapp/test.php/singlepatient/16"),
+        future: apiService.getPatientDetails("http://localhost/ayuravedaapp/test.php/singlepatient/"),
         builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());

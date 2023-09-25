@@ -34,13 +34,20 @@ dependencies:
   sqflite: ^2.0.0
   path_provider: ^2.0.0
   dio: ^4.0.0
-  http: ^0.13.3
+  http: ^0.13.5
   shared_preferences: ^2.0.8
-  flutter_stripe: ^9.2.0
   sqflite_common_ffi: ^2.1.0+1
   path: ^1.8.0
-  payhere_mobilesdk_flutter: ^3.0.7
   quickalert:
+  videosdk: ^1.1.0
+  flutter_stripe: ^9.4.0
+  flutter_stripe_web: ^4.4.0
+  stripe_checkout: ^1.0.1
+  pay: ^1.1.0
+  font_awesome_flutter: ^9.2.0
+  platform: ^3.0.0
+  webview_flutter: ^3.0.4
+
 
 
 
@@ -51,11 +58,14 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_svg: ^0.18.0
+  flutter_svg: ^2.0.5
+
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -78,7 +88,9 @@ flutter:
   assets:
     - assets/images/
     - assets/logo.png
-
+    - assets/images/visa.svg
+    - assets/images/mastercard.svg
+    - assets/images/americanexpress.svg
 
 
 

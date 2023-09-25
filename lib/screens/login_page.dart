@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../navbar/navigation_bar.dart';
 import 'register_form.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -231,6 +232,10 @@ class __FormContentState extends State<_FormContent> {
           SnackBar(content: Text(jsonData['msg'])),
         );
         if (success) {
+          // Store patient ID locally using shared_preferences
+          final String patientId = jsonData['data']['id'];
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString('patient_id', patientId);
           // Login successful, navigate to the home screen or desired screen
           Navigator.push(
             context,

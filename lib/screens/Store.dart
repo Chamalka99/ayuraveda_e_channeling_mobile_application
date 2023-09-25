@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'my_orders.dart';
+
 
 
 class MyComponent extends StatefulWidget {
@@ -45,20 +47,36 @@ class _MyComponentState extends State<MyComponent> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Product List'),
+        backgroundColor:  Color(0xFF0F3446),
       ),
       drawer: Drawer(
         child: ListView(
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Color(0xFF0F3446),
               ),
-              child: Text(
-                'හෙළ සුව',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'හෙළ සුව',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                    ),
+                  ),
+                  SizedBox(height: 8), // Add some space between the app name and the quote
+                  Text(
+                    '"Connecting you to health experts, one tap at a time."',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17, // You can adjust the font size as needed
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
             ListTile(
@@ -85,9 +103,14 @@ class _MyComponentState extends State<MyComponent> {
             ),
 
             ListTile(
-              title: Text('My orders '),
+              title: Text('My Orders'),
               onTap: () {
-                // Perform action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrdersApp(),
+                  ),
+                );
               },
             ),
           ],
@@ -139,9 +162,11 @@ class Product {
   final String imageUrl;
   final String price;
   final String description;
+  final String stock;
 
 
-  Product({required this.id, required this.name, required this.imageUrl, required this.price,required this.description});
+
+  Product({required this.id, required this.name, required this.imageUrl, required this.price,required this.description,required this.stock});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -150,6 +175,7 @@ class Product {
       imageUrl: json['product_image'],
       price: json['product_price'],
       description:json['product_description'],
+        stock:json['product_stock'],
     );
   }
 }
@@ -183,64 +209,69 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      margin: EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      color: Colors.white,
-      child: Row( // Change Column to Row
-        crossAxisAlignment: CrossAxisAlignment.start, // Align children to the top of the row
-        children: [
-          // Move Image.asset to the left side
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Image.asset(
-              "assets/images/P1.png",
-              height: 150,
-              width: 150, // Specify a fixed width for the image
-              fit: BoxFit.cover,
-            ),
-          ),
-          Expanded( // Use Expanded to make the content take up the remaining space
-            child: Padding(
+    return Container(
+      color: Color(0xFFDDDFE5),
+      child: Card(
+        elevation: 5,
+        margin: EdgeInsets.all(9),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        color: Colors.white,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
               padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                children: [
-                  Text(
-                  product.name,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Price: ' + product.price,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  Text(
-                    product.description,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-
-                ],
+              child: Image.asset(
+                "assets/images/P1.png",
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+
+                      ),
+                    ),
+                    Text(
+                      'Price: LKR ${product.price}', // Assuming price is a numeric value
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.blue, // Change text color if desired
+                      ),
+                    ),
+                    Text(
+                      'Stock: ${product.stock}', // Assuming stock is a numeric value
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.green, // Change text color if desired
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+
 
 class SingleProductView extends StatefulWidget {
   final Product product;
@@ -333,7 +364,7 @@ class _SingleProductViewState extends State<SingleProductView> {
                     cartItems.add(
                         new CartItemView(widget.product.id, quantity));
                     saveCart(cartItems);
-                    // TODO: Add the product to the cart with the selected quantity
+
                     Navigator.of(context).pop();
                   },
                   child: Text('Add'),
@@ -402,6 +433,7 @@ class _SingleProductViewState extends State<SingleProductView> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Product Details'),
+        backgroundColor:  Color(0xFF0F3446),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -485,20 +517,48 @@ class FavoriteForm extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Favorite Products'),
+        backgroundColor:  Color(0xFF0F3446),
       ),
       body: ListView.builder(
         itemCount: favoriteProducts.length,
         itemBuilder: (context, index) {
           final product = favoriteProducts[index];
-          return ListTile(
-            title: Text(product.name),
-            subtitle: Text('Price: ${product.price}'),
-            // Add other product details or actions here...
+          return Card(
+            elevation: 3, // Add elevation for a card-like effect
+            margin: EdgeInsets.all(8), // Add margin for spacing
+            child: ListTile(
+              title: Text(
+                product.name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold, // Make the text bold
+                  fontSize: 18, // Increase font size
+                ),
+              ),
+              subtitle: Text(
+                'Price: ${product.price}',
+                style: TextStyle(
+                  color: Colors.black, // Change the text color to grey
+                ),
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.favorite, // You can use your favorite icon here
+                  color: Colors.red, // Customize the color as needed
+                ),
+                onPressed: () {
+                  // Toggle the favorite status of the product
+                  ;
+                },
+              ),
+              // Add other product details or actions here...
+            ),
           );
         },
       ),
     );
   }
+
+
 }
 
 void main() {
